@@ -6,5 +6,6 @@
         public ulong MatchSequenceNumber;
         public Player[] RadiantPlayers;
         public Player[] DirePlayers;
+        public Team Winner;
     }
 }

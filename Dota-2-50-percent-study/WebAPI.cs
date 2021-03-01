@@ -35,6 +35,7 @@ namespace Dota_2_50_percent_study
                 matches[i] = match;
                 match.Id = jMatch["match_id"].ToObject<ulong>();
                 match.MatchSequenceNumber = jMatch["match_seq_num"].ToObject<ulong>();
+                match.Winner = jMatch["radiant_win"].ToObject<bool>() ? Team.Radiant : Team.Dire;
                 JObject[] jPlayers = JArray.FromObject(jMatch["players"]).Values<JObject>().ToArray();
                 match.RadiantPlayers = new Player[5];
                 match.DirePlayers = new Player[5];
