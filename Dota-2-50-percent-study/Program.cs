@@ -53,9 +53,12 @@ Choose subroutine:
 4 - analyze streak data
 q - quit
 ");
-                input = Console.ReadLine();
+                input = Console.ReadLine().ToLower();
                 switch (input)
                 {
+                    case "1" :
+                        CreateDatabase();
+                        break;
                     case "2" :
                         AddMoreMatchesToTheDatabase();
                         break;
@@ -63,6 +66,22 @@ q - quit
             }
         }
 
+        public static void CreateDatabase()
+        {
+            Console.WriteLine("WARNING! This action will delete existing database. Proceed? (y/n)");
+            string input = string.Empty;
+            while (input != "y")
+            {
+                input = Console.ReadLine().ToLower();
+                if (input == "n")
+                {
+                    return;
+                }
+            }
+            
+            Database.CreateDatabase();
+        }
+        
         public static void AddMoreMatchesToTheDatabase()
         {
             {

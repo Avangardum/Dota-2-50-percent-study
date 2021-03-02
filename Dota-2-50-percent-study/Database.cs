@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Text;
 using MySql.Data.MySqlClient;
 
@@ -6,6 +7,8 @@ namespace Dota_2_50_percent_study
 {
     public static class Database
     {
+        private const string EmptyDatabaseDumpPath = "empty_db_dump.sql";
+        
         public static string Username;
         public static string Password;
 
@@ -78,6 +81,13 @@ namespace Dota_2_50_percent_study
             string commandStr = "SELECT COUNT(*) FROM matches";
             MySqlCommand command = new MySqlCommand(commandStr, _connection);
             return (long) command.ExecuteScalar() > 0;
+        }
+
+        public static void CreateDatabase()
+        {
+            MySqlScript script = new MySqlScript(_connection, File.ReadAllText(EmptyDatabaseDumpPath));
+            script.Execute();
+            Console.WriteLine("Database created");
         }
     }
 }
