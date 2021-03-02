@@ -43,6 +43,7 @@ namespace Dota_2_50_percent_study
                 {
                     JObject jPlayer = jPlayers[j];
                     Player player = new Player();
+                    player.Match = match;
                     player.HasId = jPlayer["account_id"] != null;
                     if (player.HasId)
                     {
@@ -87,55 +88,59 @@ namespace Dota_2_50_percent_study
         {
             Console.WriteLine($"Getting {amount} matches");
 
-            try
+            Match[] matches = new Match[amount];
+            int nextElementIndex = 0;
+        
+            Match[] _100Matches = Get100MatchesStartingFromSequenceNumber(startFromSequenceNumber);
+        
+            while (true)
             {
-                Match[] matches = new Match[amount];
-                int nextElementIndex = 0;
-            
-                Match[] _100Matches = Get100MatchesStartingFromSequenceNumber(startFromSequenceNumber);
-            
-                while (true)
+                foreach (Match match in _100Matches)
                 {
-                    foreach (Match match in _100Matches)
+                    if (Array.Exists(matches, x => x != null && x.Id == match.Id)) // if match is already exists in matches array, dont add it again 
                     {
-                        if (Array.Exists(matches, x => x != null && x.Id == match.Id)) // if match is already exists in matches array, dont add it again 
-                        {
-                            continue;
-                        }
-                        if (match.RadiantPlayers.Length != 5 || match.DirePlayers.Length != 5 || 
-                            match.RadiantPlayers.Contains(null) || match.DirePlayers.Contains(null)) // if there are not 10 players in the match, don't add it
-                        {
-                            continue;
-                        }
-                    
-                        matches[nextElementIndex] = match;
-                        nextElementIndex++;
-                        if (nextElementIndex >= amount)
-                        {
-                            Console.WriteLine($"{nextElementIndex}/{amount}");
-                            return matches;
-                        }
+                        continue;
                     }
-                    Console.WriteLine($"{nextElementIndex}/{amount}");
-                
-                    Match newestMatch = _100Matches[0];
-                    foreach (Match match in _100Matches)
+                    if (match.RadiantPlayers.Length != 5 || match.DirePlayers.Length != 5 || 
+                        match.RadiantPlayers.Contains(null) || match.DirePlayers.Contains(null)) // if there are not 10 players in the match, don't add it
                     {
-                        if (match.MatchSequenceNumber > newestMatch.MatchSequenceNumber)
-                        {
-                            newestMatch = match;
-                        }
+                        continue;
                     }
                 
-                    //Console.WriteLine(newestMatch.MatchSequenceNumber);
-                    _100Matches = Get100MatchesStartingFromSequenceNumber(newestMatch.MatchSequenceNumber);
+                    matches[nextElementIndex] = match;
+                    nextElementIndex++;
+                    if (nextElementIndex >= amount)
+                    {
+                        Console.WriteLine($"{nextElementIndex}/{amount}");
+                        return matches;
+                    }
                 }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Getting matches failed because of exception");
-                Console.WriteLine(e);
-                return new Match[0];
+                Console.WriteLine($"{nextElementIndex}/{amount}");
+            
+                Match newestMatch = _100Matches[0];
+                foreach (Match match in _100Matches)
+                {
+                    if (match.MatchSequenceNumber > newestMatch.MatchSequenceNumber)
+                    {
+                        newestMatch = match;
+                    }
+                }
+
+                bool success = false;
+                while (!success)
+                {
+                    try
+                    {
+                        _100Matches = Get100MatchesStartingFromSequenceNumber(newestMatch.MatchSequenceNumber);
+                        success = true;
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine("Error while getting data from the web API. Retrying in 30 seconds");
+                        success = false;
+                        Thread.Sleep(30000);
+                    }
+                }
             }
         }
     }

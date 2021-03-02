@@ -39,19 +39,24 @@ namespace Dota_2_50_percent_study
                 Console.WriteLine();
             }
             Database.Password = File.ReadAllText(DBPasswordPath);
+            
+            Database.Connect();
 
             string input = String.Empty;
             while (input != "q")
             {
                 Console.WriteLine(@"
 Choose subroutine:
-1 - add more matches to the database
+1 - create database (will delete existing data)
+2 - add more matches (and players) to the database
+3 - calculate players' win/lose streaks
+4 - analyze streak data
 q - quit
 ");
                 input = Console.ReadLine();
                 switch (input)
                 {
-                    case "1" :
+                    case "2" :
                         AddMoreMatchesToTheDatabase();
                         break;
                 }
@@ -63,11 +68,21 @@ q - quit
             {
                 Console.WriteLine("How many matches to add?");
                 int amount = int.Parse(Console.ReadLine());
+
+                ulong startFromSequenceNumber;
+                if (Database.HasMatches())
+                {
+                    startFromSequenceNumber = Database.GetLastMatchId();
+                }
+                else
+                {
+                    Console.WriteLine("Enter the sequence number (not id) of the match you want to start from");
+                    startFromSequenceNumber = ulong.Parse(Console.ReadLine());
+                }
                 
-                var matches = WebAPI.GetMatches(100, 4866994034);
+                var matches = WebAPI.GetMatches(amount, startFromSequenceNumber);
                 
-                Database.Connect();
-                Database.AddMatches(matches[0]);
+                Database.AddMatches(matches);
 
                 #region DrawTable
 
