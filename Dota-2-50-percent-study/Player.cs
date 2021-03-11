@@ -10,5 +10,6 @@
         public Team Team;
         public int Position;
         public bool HasId;
+        public bool IsWinner;
     }
 }

@@ -62,6 +62,9 @@ q - quit
                     case "2" :
                         AddMoreMatchesToTheDatabase();
                         break;
+                    case "3" :
+                        CalculatePlayerStreaks();
+                        break;
                 }
             }
         }
@@ -100,7 +103,7 @@ q - quit
                 }
                 
                 var matches = WebAPI.GetMatches(amount, startFromSequenceNumber);
-                
+
                 Database.AddMatches(matches);
 
                 #region DrawTable
@@ -126,6 +129,34 @@ q - quit
 
                 #endregion
             }
+        }
+
+        public static void CalculatePlayerStreaks()
+        {
+            Console.WriteLine("How many players to process?");
+            int amount = int.Parse(Console.ReadLine());
+
+            var players = Database.GetPlayersWhereStreakIsNull(amount);
+
+            for (int i = 0; i < amount; i++)
+            {
+                if (players[i] == null)
+                {
+                    Console.WriteLine("All players processed");
+                    break;
+                }
+
+                int streak = WebAPI.GetPlayerStreak(players[i]);
+                
+                Database.SetPlayerStreak(players[i], streak);
+
+                if ((i + 1) % 10 == 0)
+                {
+                    Console.WriteLine($"{i + 1}/{amount}");
+                }
+            }
+            
+            Console.WriteLine("Done");
         }
     }
 }

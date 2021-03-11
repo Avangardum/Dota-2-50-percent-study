@@ -89,5 +89,34 @@ namespace Dota_2_50_percent_study
             script.Execute();
             Console.WriteLine("Database created");
         }
+
+        public static Player[] GetPlayersWhereStreakIsNull(int amount)
+        {
+            string commandStr = "SELECT id, match_id FROM players WHERE streak IS NULL;";
+            MySqlCommand command = new MySqlCommand(commandStr, _connection);
+            var reader = command.ExecuteReader();
+            
+            Player[] result = new Player[amount];
+            int i = 0;
+            
+            if (reader.HasRows)
+            {
+                while (reader.Read() && i < amount)
+                {
+                    result[i] = new Player {Id = reader.GetUInt64(0), Match = new Match {Id = reader.GetUInt64(1)}};
+                    i++;
+                }
+            }
+
+            reader.Close();
+            return result;
+        }
+
+        public static void SetPlayerStreak(Player player, int streak)
+        {
+            string commandStr = $"UPDATE players SET streak = {streak} WHERE id = {player.Id};";
+            MySqlCommand command = new MySqlCommand(commandStr, _connection);
+            command.ExecuteScalar();
+        }
     }
 }
