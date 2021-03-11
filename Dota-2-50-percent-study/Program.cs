@@ -65,6 +65,9 @@ q - quit
                     case "3" :
                         CalculatePlayerStreaks();
                         break;
+                    case "4":
+                        AnalyzeStreakData();
+                        break;
                 }
             }
         }
@@ -157,6 +160,17 @@ q - quit
             }
             
             Console.WriteLine("Done");
+        }
+
+        public static void AnalyzeStreakData()
+        {
+            var data = Database.GetWinrateByStreakData(-10, 10);
+            ConsoleTable table = new ConsoleTable("Streak", "Winrate", "Players");
+            foreach (var item in data)
+            {
+                table.AddRow(item.Item1, (item.Item2 * 100).ToString("00.00") + "%", item.Item3);
+            }
+            Console.WriteLine(table);
         }
     }
 }

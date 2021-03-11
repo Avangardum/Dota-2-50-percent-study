@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using MySql.Data.MySqlClient;
@@ -117,6 +118,29 @@ namespace Dota_2_50_percent_study
             string commandStr = $"UPDATE players SET streak = {streak} WHERE id = {player.Id};";
             MySqlCommand command = new MySqlCommand(commandStr, _connection);
             command.ExecuteScalar();
+        }
+
+        public static List<(int, float, int)> GetWinrateByStreakData(int minStreak, int maxStreak)
+        {
+            string commandStr =
+                "SELECT streak, AVG(is_winner), COUNT(streak) as winrate FROM players " +
+                "WHERE streak != 0 " +
+                $"AND streak <= {maxStreak} " +
+                $"AND streak >= {minStreak} " +
+                "GROUP BY streak " +
+                "ORDER BY streak;";
+            MySqlCommand command = new MySqlCommand(commandStr, _connection);
+            var reader = command.ExecuteReader();
+            List<(int, float, int)> result = new List<(int, float, int)>();
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    result.Add( (reader.GetInt32(0), reader.GetFloat(1), reader.GetInt32(2)) );
+                }
+            }
+            reader.Close();
+            return result;
         }
     }
 }
