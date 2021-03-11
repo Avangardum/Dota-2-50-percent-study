@@ -41,13 +41,13 @@ namespace Dota_2_50_percent_study
                     foreach (var player in match.DirePlayers)
                     {
                         commandStr.Append(
-                            $"INSERT IGNORE INTO players (id, match_id, team) VALUES ({player.Id}, {player.Match.Id}, {(int) Team.Dire});\n");
+                            $"INSERT IGNORE INTO players (id, match_id, team, is_winner) VALUES ({player.Id}, {player.Match.Id}, {(int) Team.Dire}, {player.IsWinner});\n");
                     }
 
                     foreach (var player in match.RadiantPlayers)
                     {
                         commandStr.Append(
-                            $"INSERT IGNORE INTO players (id, match_id, team) VALUES ({player.Id}, {player.Match.Id}, {(int) Team.Radiant});\n");
+                            $"INSERT IGNORE INTO players (id, match_id, team, is_winner) VALUES ({player.Id}, {player.Match.Id}, {(int) Team.Radiant}, {player.IsWinner});\n");
                     }
 
                     matchesInCommand++;

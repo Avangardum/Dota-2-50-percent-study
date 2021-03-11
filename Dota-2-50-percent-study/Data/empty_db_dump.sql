@@ -54,7 +54,9 @@ CREATE TABLE `players` (
   `id` bigint unsigned NOT NULL,
   `match_id` bigint unsigned NOT NULL,
   `team` tinyint unsigned NOT NULL,
-  PRIMARY KEY (`id`),
+  `is_winner` int NOT NULL,
+  `streak` int DEFAULT NULL,
+  PRIMARY KEY (`id`,`match_id`),
   UNIQUE KEY `id_UNIQUE` (`id`),
   KEY `FK_matches_players_idx` (`match_id`),
   CONSTRAINT `FK_matches_players` FOREIGN KEY (`match_id`) REFERENCES `matches` (`id`)
@@ -79,4 +81,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-03-02 11:39:25
+-- Dump completed on 2021-03-11 18:39:41

@@ -195,9 +195,9 @@ namespace Dota_2_50_percent_study
                 match.Id = jMatch["match_id"].ToObject<ulong>();
             }
             
-            if (player.Match.Id != matches[0].Id)
+            if (matches.Length == 0 || player.Match.Id != matches[0].Id)
             {
-                throw new Exception("Incorrect data");
+                return 0;
             }
 
             int matchIndex = 1;
