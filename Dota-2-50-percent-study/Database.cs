@@ -125,6 +125,7 @@ namespace Dota_2_50_percent_study
             string commandStr =
                 "SELECT streak, AVG(is_winner), COUNT(streak) as winrate FROM players " +
                 "WHERE streak != 0 " +
+                "AND streak IS NOT NULL " +
                 $"AND streak <= {maxStreak} " +
                 $"AND streak >= {minStreak} " +
                 "GROUP BY streak " +
